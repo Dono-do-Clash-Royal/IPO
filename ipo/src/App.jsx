@@ -21,25 +21,77 @@ function App() {
           <Route path="/inspecoes" element={<InspecoesList />} />
         </Routes>
       </div>
-      <div className="jumbotron">
-        <div className="text-center">
-        <h1>Centro de Inspeções de Automóveis</h1>
-        <p>IPO - ESDS1</p>
-        </div>
-      </div>
     </div>
   );
 }
 // Estas páginas serão criadas nas próximas etapas
 function Inicio() {
-  return (<h2></h2>);
+  return (
+    <div className="jumbotron">
+      <div className="text-center">
+        <h1>Centro de Inspeções de Automóveis</h1>
+        <p>IPO - ESDS1</p>
+      </div>
+    </div>
+  );
 }
 function ClientesList() {
-  return (<h2>Página de Clientes <button className="btn btn-primary"><i className="fa fa-plus"></i> Novo Cliente</button></h2>);
+  return (
+    <div>
+      <div className="d-flex justify-content-between align-items-center mb-3">
+        <h2>Clientes</h2>
+        <div className="d-flex gap-2">
+          <button className="btn btn-dark">
+            <i className="fa fa-plus"></i> Novo Cliente
+          </button>
+          <button className="btn btn-light text-dark">
+            <i className="fa fa-refresh"></i> Atualizar
+          </button>
+        </div>
+      </div>
+      <div className="container">
+        <table className="table table-striped">
+          <thead>
+            <tr>
+              <th>código</th>
+              <th>Nome</th>
+              <th>Morada</th>
+              <th>NIF</th>
+              <th>Opções</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td>Julio Pinhoo</td>
+              <td>Lisboa</td>
+              <td>185763224</td>
+              <td>18</td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>Barros Silva</td>
+              <td>Madeira</td>
+              <td>785429675</td>
+              <td>785429675</td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td>Maria Juahna</td>
+              <td>Leiria</td>
+              <td>754863214</td>
+              <td>754863214</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
 }
 function VeiculosList() {
   return (<h2>Página de Veículos</h2>);
 }
+
 function InspecoesList() {
   return (<h2>Página de Inspeções</h2>);
 }
