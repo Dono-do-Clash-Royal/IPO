@@ -35,7 +35,7 @@ function Inicio() {
   return (<h2></h2>);
 }
 function ClientesList() {
-  return (<h2>Página de Clientes</h2>);
+  return (<h2>Página de Clientes <button className="btn btn-primary"><i className="fa fa-plus"></i> Novo Cliente</button></h2>);
 }
 function VeiculosList() {
   return (<h2>Página de Veículos</h2>);
