@@ -28,18 +28,43 @@ function App() {
     </div>
   );
 }
+
 // Estas páginas serão criadas nas próximas etapas
 function Inicio() {
+
   return (
-    <div className="jumbotron">
-      <div className="text-center">
-        <h1>Centro de Inspeções de Automóveis</h1>
-        <p>IPO - ESDS1</p>
+    <div>
+      <div className="jumbotron text-center">
+        <h1> Centro de inspeções de automoveis </h1>
+        <p>IPO - ESDS1 </p>
       </div>
     </div>
   );
+
 }
+
 function ClientesList() {
+
+  const [deleteId, setDeleteId] = useState(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [clientes, setClientes] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [mensagemErro, setMensagemErro] = useState(null);
+  const navigate = useNavigate();
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+
+  const openDeleteModal = (id) => {
+    setDeleteId(id);
+    setShowDeleteModal(true);
+  };
+
+  const closeDeleteModal = () => {
+    setDeleteId(null);
+    setShowDeleteModal(false);
+  };
 
   const confirmDelete = async (id) => {
     try {
@@ -53,16 +78,11 @@ function ClientesList() {
     } catch {
       setMensagemErro('Erro ao eliminar cliente');
     }
+    finally {
+      closeDeleteModal();
+    }
   };
 
-  const [clientes, setClientes] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [mensagemErro, setMensagemErro] = useState(null);
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    fetchData();
-  }, []);
   const fetchData = async () => {
     try {
       const response = await fetch(API_BASE + '/clientes');
@@ -78,6 +98,7 @@ function ClientesList() {
       setLoading(false);
     }
   };
+  
   if (loading) return <p>Carregando...</p>;
   return (
     <>
@@ -118,17 +139,42 @@ function ClientesList() {
               <td style={{ whiteSpace: 'nowrap' }}>
                 <button className="btn btn-dark btn-sm mr-2" ><i className='fa fa-eye' aria-hidden='true'></i></button>
                 <button className="btn btn-dark btn-sm mr-2" ><i className='fa fa-pencil' aria-hidden='true'></i></button>
-                <button className="btn btn-dark btn-sm"
-                  onClick={() => confirmDelete(cliente.codcli)}> <i className='fa fa-trash' aria-hidden='true'></i>
+                <button className="btn btn-dark btn-sm" onClick={() => openDeleteModal(cliente.codcli)}>
+                  <i className='fa fa-trash' aria-hidden='true'></i>
                 </button>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
+      {showDeleteModal && (
+        <>
+          <div className="modal-backdrop fade show"></div>
+          <div className="modal fade show" style={{ display: 'block' }} tabIndex="-1" role="dialog">
+            <div className="modal-dialog" role="document">
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h5 className="modal-title">Confirmação</h5>
+                  <button type="button" className="close" onClick={closeDeleteModal}>
+                    <span>&times;</span>
+                  </button>
+                </div>
+                <div className="modal-body">
+                  <p>Tem certeza que deseja eliminar este cliente?</p>
+                </div>
+                <div className="modal-footer">
+                  <button type="button" className="btn btn-secondary" onClick={closeDeleteModal}>Cancelar</button>
+                  <button type="button" className="btn btn-danger" onClick={() => confirmDelete(deleteId)}>Confirmar</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
     </>
   );
 }
+
 function VeiculosList() {
   return (<h2>Página de Veículos</h2>);
 }
@@ -136,4 +182,5 @@ function VeiculosList() {
 function InspecoesList() {
   return (<h2>Página de Inspeções</h2>);
 }
+
 export default App
