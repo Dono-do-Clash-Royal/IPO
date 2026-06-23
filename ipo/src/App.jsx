@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react'
 import { useNavigate, Routes, Route, Link } from 'react-router-dom';
+import { ClienteForm } from './ClienteForm';
 
-const API_BASE = 'https://effective-capybara-v665669654wghp5gj-3000.app.github.dev'
+const API_BASE = 'https://turbo-zebra-wrr4rrpr4wjrhg749-3000.app.github.dev';
 
 function App() {
   return (
@@ -13,38 +14,46 @@ function App() {
           <div className="navbar-nav">
             <Link className="nav-link" to="/clientes">Clientes</Link>
             <Link className="nav-link" to="/veiculos">Veículos</Link>
-            <Link className="nav-link" to="/inspecoes">Inspeções</Link>
+            <Link className="nav-link" to="/inspecoes">inspecoes</Link>
           </div>
         </div>
       </nav>
       <div className="container mt-4">
+
         <Routes>
           <Route path="/" element={<Inicio />} />
           <Route path="/clientes" element={<ClientesList />} />
+
+          <Route path="/clientes/create" element={<ClienteForm modo="create" />} />
+          <Route path="/clientes/update/:id" element={<ClienteForm modo="update" />} />
+          <Route path="/clientes/read/:id" element={<ClienteForm modo="read" />} />
+
           <Route path="/veiculos" element={<VeiculosList />} />
           <Route path="/inspecoes" element={<InspecoesList />} />
         </Routes>
+
       </div>
     </div>
   );
 }
+
 
 // Estas páginas serão criadas nas próximas etapas
 function Inicio() {
-
   return (
-    <div>
-      <div className="jumbotron text-center">
-        <h1> Centro de inspeções de automoveis </h1>
-        <p>IPO - ESDS1 </p>
-      </div>
-    </div>
-  );
+    <div className="jumbotron">
+      <h1 className="text-center">Centro de inspeções de automoveis</h1>
+      <p className="text-center">IPO - ESDS1</p>
 
+    </div>
+
+  );
 }
 
-function ClientesList() {
 
+
+
+function ClientesList() {
   const [deleteId, setDeleteId] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [clientes, setClientes] = useState([]);
@@ -52,9 +61,9 @@ function ClientesList() {
   const [mensagemErro, setMensagemErro] = useState(null);
   const navigate = useNavigate();
   useEffect(() => {
+
     fetchData();
   }, []);
-
 
   const openDeleteModal = (id) => {
     setDeleteId(id);
@@ -77,8 +86,7 @@ function ClientesList() {
       }
     } catch {
       setMensagemErro('Erro ao eliminar cliente');
-    }
-    finally {
+    } finally {
       closeDeleteModal();
     }
   };
@@ -98,7 +106,6 @@ function ClientesList() {
       setLoading(false);
     }
   };
-  
   if (loading) return <p>Carregando...</p>;
   return (
     <>
@@ -107,7 +114,11 @@ function ClientesList() {
           <h2>Clientes</h2>
         </div>
         <div className="col-6 text-right">
-          <button className="btn btn-dark ml-3" ><i className="fa fa-plus-square" aria-hidden="true"></i> Novo Cliente</button>
+
+          <Link to="/clientes/create" className="btn btn-dark">
+            <i className="fa fa-plus-square"></i> Novo Cliente
+          </Link>
+
           <button className="btn btn-light ml-3" onClick={fetchData}><i className="fa fa-refresh" aria-hidden="true"></i> Atualizar</button>
         </div>
       </div>
@@ -171,12 +182,17 @@ function ClientesList() {
           </div>
         </>
       )}
+
     </>
   );
 }
 
-function VeiculosList() {
 
+
+
+
+
+function VeiculosList() {
   const [deleteId, setDeleteId] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [veiculos, setVeiculos] = useState([]);
@@ -184,9 +200,9 @@ function VeiculosList() {
   const [mensagemErro, setMensagemErro] = useState(null);
   const navigate = useNavigate();
   useEffect(() => {
+
     fetchData();
   }, []);
-
 
   const openDeleteModal = (id) => {
     setDeleteId(id);
@@ -209,8 +225,7 @@ function VeiculosList() {
       }
     } catch {
       setMensagemErro('Erro ao eliminar veiculo');
-    }
-    finally {
+    } finally {
       closeDeleteModal();
     }
   };
@@ -225,12 +240,11 @@ function VeiculosList() {
         setMensagemErro(data.message);
       }
     } catch {
-      setMensagemErro('Erro ao carregar veiculos');
+      setMensagemErro('Erro ao carregar Veiculos');
     } finally {
       setLoading(false);
     }
   };
-  
   if (loading) return <p>Carregando...</p>;
   return (
     <>
@@ -254,25 +268,28 @@ function VeiculosList() {
       <table className="table table-striped">
         <thead>
           <tr>
+            <th>Código</th>
             <th>Matrícula</th>
             <th>Data Livrete</th>
-            <th>Ano Fabrico</th>
-            <th>Nome do Cliente</th>
+            <th>Ano farbrico</th>
+            <th>Nome do cliente</th>
             <th>Marca</th>
+            <th>Opções</th>
           </tr>
         </thead>
         <tbody>
-          {veiculos.map((veiculo) => (
-            <tr key={veiculo.id ?? veiculo.id ?? '-'}>
-              <td>{veiculo.matricula ?? veiculo.matricula ?? '-'}</td>
-              <td>{veiculo.dataLivrete ?? veiculo.data_livrete ?? '-'}</td>
-              <td>{veiculo.anoFabrico ?? veiculo.ano_fabrico ?? '-'}</td>
-              <td>{veiculo.nomeCliente ?? veiculo.nome_cliente ?? veiculo.cliente?.nome ?? '-'}</td>
-              <td>{veiculo.marca?.marca ?? veiculo.marca ?? '-'}</td>
+          {veiculos.map(veiculos => (
+            <tr key={veiculos.codveiculo}>
+              <td>{veiculos.codveiculo}</td>
+              <td>{veiculos.codmatricula}</td>
+              <td>{veiculos.datalivrete}</td>
+              <td>{veiculos.anofabrico}</td>
+              <td>{veiculos.cliente.nome}</td>
+              <td>{veiculos.marca.marca}</td>
               <td style={{ whiteSpace: 'nowrap' }}>
                 <button className="btn btn-dark btn-sm mr-2" ><i className='fa fa-eye' aria-hidden='true'></i></button>
                 <button className="btn btn-dark btn-sm mr-2" ><i className='fa fa-pencil' aria-hidden='true'></i></button>
-                <button className="btn btn-dark btn-sm" onClick={() => openDeleteModal(veiculo.id ?? veiculo.codveiculo ?? veiculo.matricula)}>
+                <button className="btn btn-dark btn-sm" onClick={() => openDeleteModal(veiculos.codveiculo)}>
                   <i className='fa fa-trash' aria-hidden='true'></i>
                 </button>
               </td>
@@ -293,7 +310,146 @@ function VeiculosList() {
                   </button>
                 </div>
                 <div className="modal-body">
-                  <p>Tem certeza que deseja eliminar este Veiculo?</p>
+                  <p>Tem certeza que deseja eliminar este veiculo?</p>
+                </div>
+                <div className="modal-footer">
+                  <button type="button" className="btn btn-secondary" onClick={closeDeleteModal}>Cancelar</button>
+                  <button type="button" className="btn btn-danger" onClick={() => confirmDelete(deleteId)}>Confirmar</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+
+    </>
+  );
+}
+
+
+
+
+function InspecoesList() {
+  const [deleteId, setDeleteId] = useState(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [inspecoes, setInspecoes] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [mensagemErro, setMensagemErro] = useState(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const openDeleteModal = (id) => {
+    setDeleteId(id);
+    setShowDeleteModal(true);
+  };
+
+  const closeDeleteModal = () => {
+    setDeleteId(null);
+    setShowDeleteModal(false);
+  };
+
+  const confirmDelete = async (id) => {
+    try {
+      const response = await fetch(API_BASE + '/inspecoes/' + id, { method: 'DELETE' });
+      const data = await response.json();
+      if (data.success) {
+        fetchData();
+      } else {
+        setMensagemErro(data.message);
+      }
+    } catch {
+      setMensagemErro('Erro ao eliminar inspeção');
+    }
+    finally {
+      closeDeleteModal();
+    }
+  };
+
+  const fetchData = async () => {
+    try {
+      const response = await fetch(API_BASE + '/inspecoes');
+      const data = await response.json();
+      if (data.success) {
+        setInspecoes(data.data);
+      } else {
+        setMensagemErro(data.message);
+      }
+    } catch {
+      setMensagemErro('Erro ao carregar inspeções');
+    } finally {
+      setLoading(false);
+    }
+  };
+  if (loading) return <p>Carregando...</p>;
+  return (
+    <>
+      <div className="row">
+        <div className="col-6">
+          <h2>Página de Inspeções</h2>
+        </div>
+        <div className="col-6 text-right">
+          <button className="btn btn-dark ml-3" ><i className="fa fa-plus-square" aria-hidden="true"></i> Nova Inspeção</button>
+          <button className="btn btn-light ml-3" onClick={fetchData}><i className="fa fa-refresh" aria-hidden="true"></i> Atualizar</button>
+        </div>
+      </div>
+      {mensagemErro && (
+        <div className="alert alert-danger alert-dismissible fade show" role="alert">
+          {mensagemErro}
+          <button type="button" className="close" onClick={() => setMensagemErro('')} aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+      )}
+      <table className="table table-striped">
+        <thead>
+          <tr>
+            <th>Codigo Inspeção</th>
+            <th>Código Cliente</th>
+            <th>Código Matrícula</th>
+            <th>Código Inspetor</th>
+            <th>Data Inspeção</th>
+            <th>Número Faltas</th>
+            <th>Descrição Faltas</th>
+            <th>Aprovado</th>
+            <th>Opções</th>
+          </tr>
+        </thead>
+        <tbody>
+          {inspecoes.map(inspecao => (
+            <tr key={inspecao.codinspecao}>
+              <td>{inspecao.codinspecao}</td>
+              <td>{inspecao.codcli}</td>
+              <td>{inspecao.codmatricula}</td>
+              <td>{inspecao.codinspetor}</td>
+              <td>{inspecao.datainspecao}</td>
+              <td>{inspecao.numerofaltas}</td>
+              <td>{inspecao.descricaofaltas}</td>
+              <td>{inspecao.aprovado}</td>
+              <td style={{ whiteSpace: 'nowrap' }}>
+                <button className="btn btn-dark btn-sm mr-2" ><i className='fa fa-eye' aria-hidden='true'></i></button>
+                <button className="btn btn-dark btn-sm mr-2" ><i className='fa fa-pencil' aria-hidden='true'></i></button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      {showDeleteModal && (
+        <>
+          <div className="modal-backdrop fade show"></div>
+          <div className="modal fade show" style={{ display: 'block' }} tabIndex="-1" role="dialog">
+            <div className="modal-dialog" role="document">
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h5 className="modal-title">Confirmação</h5>
+                  <button type="button" className="close" onClick={closeDeleteModal}>
+                    <span>&times;</span>
+                  </button>
+                </div>
+                <div className="modal-body">
+                  <p>Tem certeza que deseja eliminar este veículo?</p>
                 </div>
                 <div className="modal-footer">
                   <button type="button" className="btn btn-secondary" onClick={closeDeleteModal}>Cancelar</button>
@@ -306,10 +462,10 @@ function VeiculosList() {
       )}
     </>
   );
-}
 
-function InspecoesList() {
-  return (<h2>Página de Inspeções</h2>);
-}
 
+
+
+
+}
 export default App
