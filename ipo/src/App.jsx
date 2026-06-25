@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react'
-import { useNavigate, Routes, Route, Link } from 'react-router-dom';
+import { useNavigate, Routes, Route, Link, useParams } from 'react-router-dom';
 
 
 
-const API_BASE = 'https://turbo-zebra-wrr4rrpr4wjrhg749-3000.app.github.dev';
+const API_BASE = 'https://reimagined-tribble-4jjrjj5jrxw7357j6-3000.app.github.dev';
 
 function App() {
   return (
@@ -189,20 +189,38 @@ function ClientesList() {
 }
 
 
-function ClienteForm() {
- const [mensagemErro, setMensagemErro] = useState(null);
-  const [formData, setFormData] = useState({
-    nome: '',
-    morada: '',
-    nif: ''
-  });
+function ClienteForm({ modo }) {
+  const { id } = useParams();
   const navigate = useNavigate();
-
+  const [formData, setFormData] = useState({ nome: '', morada: '', nif: '' });
+  const [loading, setLoading] = useState(true);
+  const [mensagemErro, setMensagemErro] = useState(null);
+  useEffect(() => {
+    fetchData();
+  }, [id]);
+  const fetchData = async () => {
+    try {
+      if (id) {
+        const response = await fetch(API_BASE + '/clientes.php?id=' + id);
+        const data = await response.json();
+        if (data.success) {
+          setFormData(data.data);
+        } else {
+          setMensagemErro(data.message);
+        }
+      }
+    } catch {
+      setMensagemErro('Erro ao carregar cliente');
+    } finally {
+      setLoading(false);
+    }
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
-      const method = 'POST';
-      const url = `${API_BASE}/clientes`;
+      const method = modo === 'update' ? 'PUT' : 'POST';
+      const url = modo === 'update' ? `${API_BASE}/clientes?id=${id}` : `${API_BASE}/clientes.php`;
       const response = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
@@ -218,37 +236,68 @@ function ClienteForm() {
       setMensagemErro('Erro ao guardar o cliente');
     }
   };
-
+  if (loading) return <p>Carregando...</p>;
+  let title;
+  if (modo === 'create') title = 'Novo Cliente';
+  else if (modo === 'update') title = 'Editar Cliente #' + id;
+  else title = 'Cliente #' + id;
   return (
-    <>
-      <h2>Novo Cliente</h2>
-      <form onSubmit={handleSubmit}>
+    <form onSubmit={modo !== 'read' ? handleSubmit : undefined}>
+      <h2>{title}</h2>
+      {mensagemErro && (
+        <div className="alert alert-danger alert-dismissible fade show" role="alert">
+          {mensagemErro}
+          <button type="button" className="close" onClick={() => setMensagemErro('')} aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+      )}
+      <div className="row">
+        <div className="col-sm-8">
+          <div className="form-group">
+            <label htmlFor="nome">Nome:</label>
+            <input type="text" className="form-control" value={formData.nome} onChange={(e) => setFormData({
+              ...formData, nome:
 
-        <div className="row">
-          <div className="form-group col-8">
-            <label>Nome:</label>
-            <input className="form-control" value={formData.nome} onChange={(e) => setFormData({ ...formData, nome: e.target.value })}/>
+                e.target.value
+            })} required readOnly={modo === 'read'} />
           </div>
         </div>
-
-        <div className="row">
-          <div className="form-group col-6">
-            <label>Morada</label>
-            <input className="form-control" value={formData.morada} onChange={(e) => setFormData({ ...formData, morada: e.target.value })}/>
+      </div>
+      <div className="row">
+        <div className="col-sm-6">
+          <div className="form-group">
+            <label htmlFor="morada">Morada</label>
+            <input type="text" className="form-control" value={formData.morada} onChange={(e) => setFormData({
+              ...formData, morada:
+                e.target.value
+            })} required readOnly={modo === 'read'} />
           </div>
-
-          <div className="form-group col-6">
-            <label>NIF</label>
-            <input className="form-control" value={formData.nif} onChange={(e) => setFormData({ ...formData, nif: e.target.value })}/>
-          </div> 
         </div>
+        <div className="col-sm-6">
+          <div className="form-group">
+            <label htmlFor="nif">NIF</label>
+            <input type="text" className="form-control" value={formData.nif} onChange={(e) => setFormData({
+              ...formData, nif:
 
-        <button type="submit" className="btn btn-dark mr-2">Guardar</button>
-        <button type="button" className="btn btn-dark mr-2" onClick={() => navigate('/clientes')}>Cancelar</button>
-      </form>
-    </>
+                e.target.value
+            })} required readOnly={modo === 'read'} />
+          </div>
+        </div>
+      </div>
+      {modo !== 'read' ? (
+        <>
+          <button type="submit" className="btn btn btn-dark mr-2">Guardar</button>
+          <button type="button" className="btn btn-secondary" onClick={() => navigate('/clientes')}>Cancelar</button>
+        </>
+      ) : (
+        <button type="button" className="btn btn-secondary" onClick={() => navigate('/clientes')}>Voltar</button>
+      )}
+    </form>
   );
 }
+
+
 
 
 
