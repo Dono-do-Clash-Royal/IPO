@@ -4,7 +4,7 @@ info:
 
 http:
   method: GET
-  url: https://turbo-zebra-wrr4rrpr4wjrhg749-3000.app.github.dev/
+  url: https://obscure-doodle-97vxxqq5px3w47-3000.app.github.dev/
   auth: inherit
 
 settings:

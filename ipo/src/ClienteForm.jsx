@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 
-const API_BASE = 'https://reimagined-tribble-4jjrjj5jrxw7357j6-3000.app.github.dev';
+const API_BASE = 'https://obscure-doodle-97vxxqq5px3w47-3000.app.github.dev/';
 
 export function ClienteForm({ modo }) {
   const { id } = useParams();

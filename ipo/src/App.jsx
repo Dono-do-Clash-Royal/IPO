@@ -1,9 +1,8 @@
-import { useState, useEffect } from 'react'
-import { useNavigate, Routes, Route, Link, useParams } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, Routes, Route, Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
-
-
-const API_BASE = 'https://reimagined-tribble-4jjrjj5jrxw7357j6-3000.app.github.dev';
+const API_BASE = 'https://obscure-doodle-97vxxqq5px3w47-3000.app.github.dev';
 
 function App() {
   return (
@@ -15,16 +14,16 @@ function App() {
           <div className="navbar-nav">
             <Link className="nav-link" to="/clientes">Clientes</Link>
             <Link className="nav-link" to="/veiculos">Veículos</Link>
-            <Link className="nav-link" to="/inspecoes">inspecoes</Link>
+            <Link className="nav-link" to="/inspecoes">Inspeções</Link>
           </div>
         </div>
       </nav>
       <div className="container mt-4">
-
         <Routes>
           <Route path="/" element={<Inicio />} />
           <Route path="/clientes" element={<ClientesList />} />
 
+          {/* Rotas do formulário de Clientes */}
           <Route path="/clientes/create" element={<ClienteForm modo="create" />} />
           <Route path="/clientes/update/:id" element={<ClienteForm modo="update" />} />
           <Route path="/clientes/read/:id" element={<ClienteForm modo="read" />} />
@@ -32,27 +31,22 @@ function App() {
           <Route path="/veiculos" element={<VeiculosList />} />
           <Route path="/inspecoes" element={<InspecoesList />} />
         </Routes>
-
       </div>
     </div>
   );
 }
 
-
 // Estas páginas serão criadas nas próximas etapas
 function Inicio() {
   return (
-    <div className="jumbotron">
-      <h1 className="text-center">Centro de inspeções de automoveis</h1>
-      <p className="text-center">IPO - ESDS1</p>
-
+    <div>
+      <div className="jumbotron text-center">
+        <h1>Centro de Inspeções de Automóveis</h1>
+        <p>IPO - ESDS1</p>
+      </div>
     </div>
-
   );
 }
-
-
-
 
 function ClientesList() {
   const [deleteId, setDeleteId] = useState(null);
@@ -62,7 +56,6 @@ function ClientesList() {
   const [mensagemErro, setMensagemErro] = useState(null);
   const navigate = useNavigate();
   useEffect(() => {
-
     fetchData();
   }, []);
 
@@ -87,7 +80,8 @@ function ClientesList() {
       }
     } catch {
       setMensagemErro('Erro ao eliminar cliente');
-    } finally {
+    }
+    finally {
       closeDeleteModal();
     }
   };
@@ -115,11 +109,9 @@ function ClientesList() {
           <h2>Clientes</h2>
         </div>
         <div className="col-6 text-right">
-
           <Link to="/clientes/create" className="btn btn-dark">
             <i className="fa fa-plus-square"></i> Novo Cliente
           </Link>
-
           <button className="btn btn-light ml-3" onClick={fetchData}><i className="fa fa-refresh" aria-hidden="true"></i> Atualizar</button>
         </div>
       </div>
@@ -147,10 +139,14 @@ function ClientesList() {
               <td>{cliente.codcli}</td>
               <td>{cliente.nome}</td>
               <td>{cliente.morada}</td>
-              <td>{cliente.nif}</td>
+              <td>{cliente.nif}</td>  
               <td style={{ whiteSpace: 'nowrap' }}>
-                <button className="btn btn-dark btn-sm mr-2" ><i className='fa fa-eye' aria-hidden='true'></i></button>
-                <button className="btn btn-dark btn-sm mr-2" ><i className='fa fa-pencil' aria-hidden='true'></i></button>
+                <button className="btn btn-dark btn-sm mr-2" onClick={() => navigate(`/clientes/read/${cliente.codcli}`)}>
+                  <i className='fa fa-eye' aria-hidden='true'></i>
+                </button>
+                <button className="btn btn-dark btn-sm mr-2" onClick={() => navigate(`/clientes/update/${cliente.codcli}`)}> 
+                  <i className='fa fa-pencil' aria-hidden='true'></i>
+                </button>
                 <button className="btn btn-dark btn-sm" onClick={() => openDeleteModal(cliente.codcli)}>
                   <i className='fa fa-trash' aria-hidden='true'></i>
                 </button>
@@ -183,10 +179,11 @@ function ClientesList() {
           </div>
         </>
       )}
-
     </>
   );
 }
+
+
 
 
 function ClienteForm({ modo }) {
@@ -201,7 +198,7 @@ function ClienteForm({ modo }) {
   const fetchData = async () => {
     try {
       if (id) {
-        const response = await fetch(API_BASE + '/clientes.php?id=' + id);
+        const response = await fetch(API_BASE + '/clientes/' + id);
         const data = await response.json();
         if (data.success) {
           setFormData(data.data);
@@ -217,10 +214,9 @@ function ClienteForm({ modo }) {
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
       const method = modo === 'update' ? 'PUT' : 'POST';
-      const url = modo === 'update' ? `${API_BASE}/clientes?id=${id}` : `${API_BASE}/clientes.php`;
+      const url = modo === 'update' ? `${API_BASE}/clientes/${id}` : `${API_BASE}/clientes`;
       const response = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
@@ -228,7 +224,11 @@ function ClienteForm({ modo }) {
       });
       const data = await response.json();
       if (data.success) {
-        navigate('/clientes');
+        if (modo === '/clientes/update' + id) {
+          navigate('/clientes/update/' + id);
+        } else {
+          navigate('/clientes');
+        }
       } else {
         setMensagemErro(data.message);
       }
@@ -258,7 +258,6 @@ function ClienteForm({ modo }) {
             <label htmlFor="nome">Nome:</label>
             <input type="text" className="form-control" value={formData.nome} onChange={(e) => setFormData({
               ...formData, nome:
-
                 e.target.value
             })} required readOnly={modo === 'read'} />
           </div>
@@ -279,7 +278,6 @@ function ClienteForm({ modo }) {
             <label htmlFor="nif">NIF</label>
             <input type="text" className="form-control" value={formData.nif} onChange={(e) => setFormData({
               ...formData, nif:
-
                 e.target.value
             })} required readOnly={modo === 'read'} />
           </div>
@@ -301,6 +299,7 @@ function ClienteForm({ modo }) {
 
 
 
+
 function VeiculosList() {
   const [deleteId, setDeleteId] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -308,8 +307,8 @@ function VeiculosList() {
   const [loading, setLoading] = useState(true);
   const [mensagemErro, setMensagemErro] = useState(null);
   const navigate = useNavigate();
-  useEffect(() => {
 
+  useEffect(() => {
     fetchData();
   }, []);
 
@@ -333,8 +332,9 @@ function VeiculosList() {
         setMensagemErro(data.message);
       }
     } catch {
-      setMensagemErro('Erro ao eliminar veiculo');
-    } finally {
+      setMensagemErro('Erro ao eliminar veículo');
+    }
+    finally {
       closeDeleteModal();
     }
   };
@@ -349,7 +349,7 @@ function VeiculosList() {
         setMensagemErro(data.message);
       }
     } catch {
-      setMensagemErro('Erro ao carregar Veiculos');
+      setMensagemErro('Erro ao carregar veículos');
     } finally {
       setLoading(false);
     }
@@ -359,10 +359,10 @@ function VeiculosList() {
     <>
       <div className="row">
         <div className="col-6">
-          <h2>Veiculos</h2>
+          <h2>Veículos</h2>
         </div>
         <div className="col-6 text-right">
-          <button className="btn btn-dark ml-3" ><i className="fa fa-plus-square" aria-hidden="true"></i> Novo Veiculo</button>
+          <button className="btn btn-dark ml-3" ><i className="fa fa-plus-square" aria-hidden="true"></i> Novo Veículo</button>
           <button className="btn btn-light ml-3" onClick={fetchData}><i className="fa fa-refresh" aria-hidden="true"></i> Atualizar</button>
         </div>
       </div>
@@ -377,28 +377,28 @@ function VeiculosList() {
       <table className="table table-striped">
         <thead>
           <tr>
-            <th>Código</th>
+            <th>Codigo Veiculo</th>
             <th>Matrícula</th>
             <th>Data Livrete</th>
-            <th>Ano farbrico</th>
-            <th>Nome do cliente</th>
+            <th>Ano Fabrico</th>
+            <th>Nome do Cliente</th>
             <th>Marca</th>
             <th>Opções</th>
           </tr>
         </thead>
         <tbody>
-          {veiculos.map(veiculos => (
-            <tr key={veiculos.codveiculo}>
-              <td>{veiculos.codveiculo}</td>
-              <td>{veiculos.codmatricula}</td>
-              <td>{veiculos.datalivrete}</td>
-              <td>{veiculos.anofabrico}</td>
-              <td>{veiculos.cliente.nome}</td>
-              <td>{veiculos.marca.marca}</td>
+          {veiculos.map(veiculo => (
+            <tr key={veiculo.codveiculo}>
+              <td>{veiculo.codveiculo}</td>
+              <td>{veiculo.codmatricula}</td>
+              <td>{veiculo.datalivrete}</td>
+              <td>{veiculo.anofabrico}</td>
+              <td>{veiculo.cliente.nome}</td>
+              <td>{veiculo.marca.marca}</td>
               <td style={{ whiteSpace: 'nowrap' }}>
                 <button className="btn btn-dark btn-sm mr-2" ><i className='fa fa-eye' aria-hidden='true'></i></button>
                 <button className="btn btn-dark btn-sm mr-2" ><i className='fa fa-pencil' aria-hidden='true'></i></button>
-                <button className="btn btn-dark btn-sm" onClick={() => openDeleteModal(veiculos.codveiculo)}>
+                <button className="btn btn-dark btn-sm" onClick={() => openDeleteModal(veiculo.codveiculo)}>
                   <i className='fa fa-trash' aria-hidden='true'></i>
                 </button>
               </td>
@@ -419,7 +419,7 @@ function VeiculosList() {
                   </button>
                 </div>
                 <div className="modal-body">
-                  <p>Tem certeza que deseja eliminar este veiculo?</p>
+                  <p>Tem certeza que deseja eliminar este veículo?</p>
                 </div>
                 <div className="modal-footer">
                   <button type="button" className="btn btn-secondary" onClick={closeDeleteModal}>Cancelar</button>
@@ -430,14 +430,9 @@ function VeiculosList() {
           </div>
         </>
       )}
-
     </>
   );
 }
-
-
-
-
 function InspecoesList() {
   const [deleteId, setDeleteId] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -571,10 +566,6 @@ function InspecoesList() {
       )}
     </>
   );
-
-
-
-
-
 }
+
 export default App
